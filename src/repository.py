@@ -3,7 +3,6 @@ from xlwingsform import Workbook
 
 from i_interactor import IRepository
 from i_parameter import IParameterRepository
-from src.i_interactor import T
 
 
 class SaveData:
