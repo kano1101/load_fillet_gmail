@@ -1,20 +1,30 @@
+import os
+
 import injector
 from xlwingsform import Workbook
 
 from i_interactor import IRepository
 from i_parameter import IParameterRepository
-
-
-class SaveData:
-    def __init__(self):
-        self.workbook = Workbook()
+from src.helper import get_credentials_cover, get_soups_with_gmail_labels
+from src.interactor import SaveData
 
 
 class Repository(IRepository[SaveData]):
     @injector.inject
     def __init__(self, parameter: IParameterRepository):
         self.parameter = parameter
+        self.output_worksheet = self.parameter.get_output_worksheet()
 
     def save(self, save_data: SaveData):
-        value = self.parameter.get_value(save_data)
-        self.workbook.set_value(value)
+        data = save_data.data
+
+        blank_column_numbers = [0, 2, 3, 4, 5, 9, 10]  # 0を含める
+        blanks = [""] * len(blank_column_numbers)
+
+        save_values = [blanks[:1] + list(row) + blanks[1:] for row in data]
+
+        for i, save_value in enumerate(save_values):
+            self.add(save_value)
+
+    def add(self, row_value, index=0):
+        self.output_worksheet.update(range_name=f"A{index + 2}", values=[[row_value]])
