@@ -12,11 +12,6 @@ class Controller:
     def __init__(self, parameter: IParameterController, interactor: IInteractor):
         self.parameter = parameter
         self.interactor = interactor
-        # scopes = [
-        #     'https://www.googleapis.com/auth/script.projects',
-        #     'https://www.googleapis.com/auth/spreadsheets',
-        # ]
-        # self.creds = get_credentials_cover(scopes)
 
     def write_mixture_with_similarity(self):
         labels = self.parameter.get_labels()

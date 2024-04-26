@@ -16,7 +16,7 @@ class ParameterController(IParameterController):
     @injector.inject
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
-        self.labels = ["焼菓子ギャラリー"]
+        self.labels = ["2024焼菓子ギャラリー"]
 
     def get_labels(self):
         return self.labels
