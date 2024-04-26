@@ -5,8 +5,7 @@ from xlwingsform import Workbook
 
 from i_interactor import IRepository
 from i_parameter import IParameterRepository
-from src.helper import get_credentials_cover, get_soups_with_gmail_labels
-from src.interactor import SaveData
+from interactor import SaveData
 
 
 class Repository(IRepository[SaveData]):
@@ -27,4 +26,5 @@ class Repository(IRepository[SaveData]):
             self.add(save_value)
 
     def add(self, row_value, index=0):
-        self.output_worksheet.update(range_name=f"A{index + 2}", values=[[row_value]])
+        # self.output_worksheet.update(range_name=f"A{index + 2}", values=[[row_value]])
+        print(row_value)

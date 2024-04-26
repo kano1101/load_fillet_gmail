@@ -4,13 +4,14 @@ from collections.abc import Callable
 from dotenv import load_dotenv
 
 from i_parameter import IParameter, IParameterController, IParameterInteractor, IParameterRepository
+from parameter import Parameter, ParameterController, ParameterInteractor, ParameterRepository
 from controller import Controller
 from interactor import IInteractor, IRepository, IPresenter
 from interactor import Interactor
 from repository import Repository
 from presenter import Presenter
 from presenter import IViewer
-from src.helper import get_recipe_support_spreadsheet, get_worksheet_in_recipe_support
+from helper import get_recipe_support_spreadsheet, get_worksheet_in_recipe_support
 from viewer import ConsoleViewer
 
 from diff import assign_most_similar_mixture, assign_most_similarity_as_manual
@@ -56,6 +57,39 @@ def scrape():
     # replace_product_names(sh)
 
 
+T = TypeVar("T")
+
+
+class DependencyBuilder:
+    def __init__(self):
+        # 依存性注入の初期化はconfigureに移譲
+        self._injector = injector.Injector(self.__class__.configure)
+
+    @classmethod
+    def configure(cls, binder: injector.Binder) -> None:
+        binder.bind(IInteractor, to=Interactor)
+        binder.bind(IRepository, to=Repository)
+        binder.bind(IPresenter, to=Presenter)
+        binder.bind(IViewer, to=ConsoleViewer)
+        binder.bind(IParameter, to=Parameter)
+        binder.bind(IParameterController, to=ParameterController)
+        binder.bind(IParameterInteractor, to=ParameterInteractor)
+        binder.bind(IParameterRepository, to=ParameterRepository)
+        # binder.bind(IParameter, to=Gallery2024Parameter)
+        # binder.bind(IParameterController, to=ParameterController)
+        # binder.bind(IParameterInteractor, to=Gallery2024ParameterInteractor)
+        # binder.bind(IParameterRepository, to=Gallery2024ParameterRepository)
+
+    def __getitem__(self, klass: Type[T]) -> Callable:
+        # 与えられたインタフェースに応じて実体クラスを返す
+        return lambda: self._injector.get(klass)
+
+    def build(self) -> Controller:
+        parameter_controller = self[IParameterController]()
+        interactor = self[IInteractor]()
+        return Controller(parameter_controller, interactor)
+
+
 if __name__ == '__main__':
     load_dotenv()
 
@@ -64,4 +98,4 @@ if __name__ == '__main__':
     dependency = DependencyBuilder()
     controller = dependency.build()
 
-    controller.copy_to_sheet()
+    controller.write_mixture_with_similarity()

@@ -10,11 +10,17 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 import googleapiclient.discovery as client
 
 
-def get_soups_with_gmail_labels(labels: [str]) -> object:
-    """"""
+def get_scopes():
     scopes = [
         'https://www.googleapis.com/auth/gmail.readonly',
+        'https://www.googleapis.com/auth/spreadsheets',
     ]
+    return scopes
+
+
+def get_soups_with_gmail_labels(labels: [str]) -> object:
+    """"""
+    scopes = get_scopes()
     creds = get_credentials_cover(scopes)
     soups = get_soups_for_labels(creds=creds, labels=labels)
     return soups
@@ -96,9 +102,7 @@ def get_subject_and_from_email(service, message):
 
 def get_list_subject_and_from_email_with_gmail_label(labels):
     """"""
-    scopes = [
-        'https://www.googleapis.com/auth/gmail.readonly',
-    ]
+    scopes = get_scopes()
     creds = get_credentials_cover(scopes)
     list_subject_and_from_email = get_list_subject_and_from_email(creds=creds, labels=labels)
     return list_subject_and_from_email

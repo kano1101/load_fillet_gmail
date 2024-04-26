@@ -4,5 +4,5 @@ from presenter import ViewModel
 
 class ConsoleViewer(IViewer):
     def view(self, view_model: ViewModel):
-        print(f'実行OK 製品名: {view_model.product_name}')
+        print(f'実行OK 製品名: {view_model.data}')
         return []

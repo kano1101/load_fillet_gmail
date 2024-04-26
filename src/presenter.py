@@ -6,7 +6,7 @@ from i_presenter import IViewer
 
 class ViewModel:
     def __init__(self, output_data: OutputData):
-        pass
+        self.data = output_data.data
 
 
 class Presenter(IPresenter[OutputData]):
