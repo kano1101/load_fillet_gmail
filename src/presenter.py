@@ -1,5 +1,5 @@
 import injector
-from interactor import OutputData
+from calc_and_write_mixture_similarity_interactor import OutputData
 from i_interactor import IPresenter
 from i_presenter import IViewer
 

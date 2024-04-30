@@ -1,7 +1,6 @@
 import injector
-from i_interactor import IInteractor, IRepository, IPresenter
+from i_interactor import IWriteMixtureWithAmountInteractor, IRepository, IPresenter
 from i_parameter import IParameterInteractor
-import numpy as np
 
 
 class InputData:
@@ -25,7 +24,7 @@ class SaveData:
         return self.data[index]
 
 
-class Interactor(IInteractor[InputData]):
+class WriteMixtureWithAmountInteractor(IWriteMixtureWithAmountInteractor[InputData]):
     @injector.inject
     def __init__(self, parameter: IParameterInteractor, repository: IRepository, presenter: IPresenter) -> None:
         self.parameter = parameter
@@ -50,7 +49,7 @@ class Interactor(IInteractor[InputData]):
 
         product_names = [row[0] for row in appended]
         mixture_names = [row[1] for row in appended]
-        amounts = [row[2] for row in appended]
+        amounts = [float(row[2].replace(',', '')) for row in appended]
         units = [row[3] for row in appended]
 
         result = list(zip(product_names, mixture_names, amounts, units))

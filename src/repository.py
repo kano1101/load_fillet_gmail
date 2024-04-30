@@ -5,7 +5,7 @@ from xlwingsform import Workbook
 
 from i_interactor import IRepository
 from i_parameter import IParameterRepository
-from interactor import SaveData
+from calc_and_write_mixture_similarity_interactor import SaveData
 from utils import index_to_col_name
 
 

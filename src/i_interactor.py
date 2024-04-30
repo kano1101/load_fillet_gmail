@@ -4,7 +4,13 @@ from typing import TypeVar, Generic
 T = TypeVar('T')
 
 
-class IInteractor(ABC, Generic[T]):
+class IWriteMixtureWithAmountInteractor(ABC, Generic[T]):
+    @abstractmethod
+    def handle(self, input_data: T):
+        raise NotImplementedError()
+
+
+class ICalcAndWriteMixtureSimilarityInteractor(ABC, Generic[T]):
     @abstractmethod
     def handle(self, input_data: T):
         raise NotImplementedError()

@@ -6,8 +6,11 @@ from dotenv import load_dotenv
 from i_parameter import IParameter, IParameterController, IParameterInteractor, IParameterRepository
 from parameter import Parameter, ParameterController, ParameterInteractor, ParameterRepository
 from controller import Controller
-from interactor import IInteractor, IRepository, IPresenter
-from interactor import Interactor
+from i_interactor import IRepository, IPresenter
+from i_interactor import IWriteMixtureWithAmountInteractor
+from i_interactor import ICalcAndWriteMixtureSimilarityInteractor
+from write_mixture_with_amount_interactor import WriteMixtureWithAmountInteractor
+from calc_and_write_mixture_similarity_interactor import CalcAndWriteMixtureSimilarityInteractor
 from repository import Repository
 from presenter import Presenter
 from presenter import IViewer
@@ -67,7 +70,9 @@ class DependencyBuilder:
 
     @classmethod
     def configure(cls, binder: injector.Binder) -> None:
-        binder.bind(IInteractor, to=Interactor)
+        binder.bind(Controller, to=Controller)
+        binder.bind(IWriteMixtureWithAmountInteractor, to=WriteMixtureWithAmountInteractor)
+        binder.bind(ICalcAndWriteMixtureSimilarityInteractor, to=CalcAndWriteMixtureSimilarityInteractor)
         binder.bind(IRepository, to=Repository)
         binder.bind(IPresenter, to=Presenter)
         binder.bind(IViewer, to=ConsoleViewer)
@@ -75,27 +80,22 @@ class DependencyBuilder:
         binder.bind(IParameterController, to=ParameterController)
         binder.bind(IParameterInteractor, to=ParameterInteractor)
         binder.bind(IParameterRepository, to=ParameterRepository)
-        # binder.bind(IParameter, to=Gallery2024Parameter)
-        # binder.bind(IParameterController, to=ParameterController)
-        # binder.bind(IParameterInteractor, to=Gallery2024ParameterInteractor)
-        # binder.bind(IParameterRepository, to=Gallery2024ParameterRepository)
 
     def __getitem__(self, klass: Type[T]) -> Callable:
         # 与えられたインタフェースに応じて実体クラスを返す
         return lambda: self._injector.get(klass)
 
     def build(self) -> Controller:
-        parameter_controller = self[IParameterController]()
-        interactor = self[IInteractor]()
-        return Controller(parameter_controller, interactor)
+        # parameter_controller = self[IParameterController]()
+        # interactor = self[IInteractor]()
+        # return Controller(parameter_controller, interactor)
+        return self[Controller]()
 
 
 if __name__ == '__main__':
     load_dotenv()
-
-    # scrape()
-    # ()
     dependency = DependencyBuilder()
     controller = dependency.build()
 
-    controller.write_mixture_with_similarity()
+    controller.write_mixture_with_amount()
+    controller.calc_and_write_mixture_similarity()
