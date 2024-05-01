@@ -1,3 +1,6 @@
+import re
+
+
 def col_name_to_index(col_name):
     """列名（'A'、'B'、...、'AA'、等）を0から始まるインデックスに変換する"""
     index = 0
@@ -14,3 +17,11 @@ def index_to_col_name(index):
         index, remainder = divmod(index - 1, 26)
         col_name = chr(65 + remainder) + col_name
     return col_name
+
+
+def to_column_values(arr):
+    return [[elem] for elem in arr]
+
+
+def replace_whitespace(text):
+    return re.sub(r'\s', ' ', text)

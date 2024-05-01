@@ -1,79 +1,90 @@
+from difflib import SequenceMatcher
+from utils import replace_whitespace
+
 import injector
 from i_interactor import ICalcAndWriteMixtureSimilarityInteractor, IRepository, IPresenter
 from i_parameter import IParameterInteractor
 
 
-class InputData:
-    def __init__(self, soups) -> None:
-        self.soups = soups
+class SimilarityInputData:
+    def __init__(self, adapter_names, product_names, article_names, package_names) -> None:
+        self.adapter_names = adapter_names
+        self.product_names = product_names
+        self.article_names = article_names
+        self.package_names = package_names
 
-    def get_soups(self):
-        return self.soups
+    def get_adapter_names(self):
+        return self.adapter_names
+
+    def get_product_names(self):
+        return self.product_names
+
+    def get_article_names(self):
+        return self.article_names
+
+    def get_package_names(self):
+        return self.package_names
 
 
-class OutputData:
+class SimilarityOutputData:
     def __init__(self, data) -> None:
         self.data = data
 
 
-class SaveData:
-    def __init__(self, data) -> None:
-        self.data = data
+class SaveSimilarityData:
+    def __init__(self, similarities, adapters) -> None:
+        self.similarities = similarities
+        self.adapters = adapters
 
-    def get_row_properties(self, index):
-        return self.data[index]
+    def get_similarities(self):
+        return self.similarities
+
+    def get_adapters(self):
+        return self.adapters
 
 
-class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInteractor[InputData]):
+class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInteractor[SimilarityInputData]):
     @injector.inject
     def __init__(self, parameter: IParameterInteractor, repository: IRepository, presenter: IPresenter) -> None:
         self.parameter = parameter
         self.repository = repository
         self.presenter = presenter
 
-    def handle(self, input_data: InputData):
-        soups = input_data.soups
-        appended = []
+    def handle(self, input_data: SimilarityInputData):
+        adapter_names = input_data.get_adapter_names()
 
-        for soup in soups:
-            product_name = soup.find('h1').text if soup.find('h1') else "Unknown Product"
-            tables = soup.find_all('table')
-            for table in tables:
-                rows = table.find_all('tr')
-                for row in rows:
-                    cells = row.find_all('td')
-                    mixture_values = [cell.get_text() for cell in cells]
-                    if mixture_values:
-                        if mixture_values[0] != "水" and "グラタン" not in mixture_values[0]:
-                            appended.append([product_name] + mixture_values)
+        product_names = input_data.get_product_names()
+        article_names = input_data.get_article_names()
+        package_names = input_data.get_package_names()
 
-        product_names = [row[0] for row in appended]
-        mixture_names = [row[1] for row in appended]
-        amounts = [row[2] for row in appended]
-        units = [row[3] for row in appended]
+        buttocks_names = product_names + article_names + package_names
 
-        result = list(zip(product_names, mixture_names, amounts, units))
+        similarities = []
+        adapters = []
 
-        save_result = result
+        for adapter_name in adapter_names:
+            adapter_name_with_whitespace = replace_whitespace(adapter_name)
 
-        save_data = SaveData(save_result)
-        self.repository.save(save_data)
+            highest_similarity = 0
+            most_similar_mixture = ""
 
-        output_result = result
+            for buttocks_name in buttocks_names:
 
-        output_data = OutputData(output_result)
-        self.presenter.output(output_data)
-        # soups = get_soups_with_gmail_labels(labels)
+                # ここにのちにアダプタ検索も追加
+                buttocks_with_whitespace = replace_whitespace(buttocks_name)
+
+                similarity = SequenceMatcher(None, adapter_name_with_whitespace, buttocks_with_whitespace).ratio()
+                if similarity > highest_similarity:
+                    highest_similarity = similarity
+                    most_similar_mixture = buttocks_with_whitespace
+
+            similarities.append(highest_similarity)
+            adapters.append(most_similar_mixture)
+
+        save_data = SaveSimilarityData(similarities, adapters)
+        self.repository.save_similarity_and_adapter_columns(save_data)
+
+        # output_result = result
         #
-        # list_product_and_amount = []
-        # for soup in soups:
-        #     strong_tags = soup.find_all('strong')
-        #     product_name = soup.find('h1').text if soup.find('h1') else "Unknown Product"
-        #     # 条件に一致するテキストを抽出
-        #     for tag in strong_tags:
-        #         if tag.text == '収量':
-        #             yield_text = tag.next_sibling
-        #             amount_and_unit = yield_text.strip().split(' ')
-        #             list_product_and_amount.append([product_name] + amount_and_unit)
-        #
-        # return list_product_and_amount
+        # output_data = OutputData(output_result)
+        # self.presenter.output(output_data)

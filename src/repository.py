@@ -1,54 +1,50 @@
-import os
-
 import injector
-from xlwingsform import Workbook
 
 from i_interactor import IRepository
 from i_parameter import IParameterRepository
-from calc_and_write_mixture_similarity_interactor import SaveData
-from utils import index_to_col_name
+from write_mixture_with_amount_interactor import SaveMixtureWithAmountData
+from calc_and_write_mixture_similarity_interactor import SaveSimilarityData
+from utils import index_to_col_name, to_column_values
 
 
-class Repository(IRepository[SaveData]):
+class Repository(IRepository[SaveMixtureWithAmountData]):
     @injector.inject
     def __init__(self, parameter: IParameterRepository):
         self.parameter = parameter
         self.output_worksheet = self.parameter.get_output_worksheet()
 
-    def save(self, save_data: SaveData):
-        self.output_worksheet.batch_clear(["B2:B", "G2:K"])
-        self.update_columns(save_data)
+    def save_mixture_and_amount_columns(self, save_data: SaveMixtureWithAmountData):
+        self.output_worksheet.batch_clear(["B2:B", "G2:I"])
+        self.update_mixture_and_amount_columns(save_data)
 
-    def update_columns(self, save_data: SaveData):
+    def save_similarity_and_adapter_columns(self, save_data: SaveSimilarityData):
+        self.output_worksheet.batch_clear(["J2:K"])
+        self.update_similarity_and_adapter_columns(save_data)
+
+    def update_mixture_and_amount_columns(self, save_data: SaveMixtureWithAmountData):
         column_numbers = [1, 6, 7, 8]  # 0を含める
         column_length = 11
 
-        data = save_data.data
-        save_values = []
+        data = save_data.get_rows()
         for i in range(0, column_length):
             if i in column_numbers:
                 tup_index = column_numbers.index(i)
                 values = [[tup[tup_index]] for tup in data]
                 self.update_column(values, i)
 
-    def update_row(self, save_data: SaveData):
-        blank_column_numbers = [0, 2, 3, 4, 5, 9, 10]  # 0を含める
-        column_length = 11
+    def update_similarity_and_adapter_columns(self, save_data: SaveSimilarityData):
+        similarities = save_data.get_similarities()
+        adapters = save_data.get_adapters()
 
-        data = save_data.data
-        save_values = []
-        for d in data:
-            tmp = list(d)
-            for blank_column_number in blank_column_numbers:
-                tmp.insert(blank_column_number, "")
-            save_values.append(tmp)
+        similarity_column_values = to_column_values(similarities)
+        adapter_column_values = to_column_values(adapters)
 
-        for i, save_value in enumerate(save_values):
-            self.add_row(save_value, i)
+        self.update_column(similarity_column_values, 9)
+        self.update_column(adapter_column_values, 10)
 
-    def add_row(self, row_value, index=0):
-        self.output_worksheet.update(range_name=f"A{index + 3}", values=[row_value])
-
-    def update_column(self, values, index=0):
+    def update_column(self, values, index):
+        for row_value in values:
+            if len(row_value) != 1:
+                raise ValueError("update_columnでは複数列同時更新できません。1列のみの更新に限定してください")
         column_char = index_to_col_name(index)
         self.output_worksheet.update(range_name=f"{column_char}2", values=values)

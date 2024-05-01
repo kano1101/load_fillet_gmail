@@ -18,7 +18,11 @@ class ICalcAndWriteMixtureSimilarityInteractor(ABC, Generic[T]):
 
 class IRepository(ABC, Generic[T]):
     @abstractmethod
-    def save(self, save_data: T):
+    def save_mixture_and_amount_columns(self, save_data: T):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def save_similarity_and_adapter_columns(self, save_data: T):
         raise NotImplementedError()
 
 
