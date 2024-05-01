@@ -18,20 +18,19 @@ def get_scopes():
     return scopes
 
 
-def get_soups_with_gmail_labels(labels: [str]) -> object:
+def get_soups_with_gmail_label(label: str) -> object:
     """"""
     scopes = get_scopes()
     creds = get_credentials_cover(scopes)
-    soups = get_soups_for_labels(creds=creds, labels=labels)
+    soups = get_soups_for_label(creds=creds, label=label)
     return soups
 
 
-def get_soups_for_labels(creds, labels):
+def get_soups_for_label(creds, label):
     soups = []
-    for label in labels:
-        service, messages = get_emails(creds, label)
-        for message in messages:
-            soups.append(get_soup_from_message(service=service, message=message))
+    service, messages = get_emails(creds, label)
+    for message in messages:
+        soups.append(get_soup_from_message(service=service, message=message))
     return soups
 
 
@@ -82,13 +81,12 @@ def get_soup_from_message(service, message):
     return soup
 
 
-def get_list_subject_and_from_email(creds, labels):
+def get_list_subject_and_from_email(creds, label):
     list_subject_and_from_email = []
-    for label in labels:
-        service, messages = get_emails(creds, label)
-        for message in messages:
-            subject_and_from_email = get_subject_and_from_email(service=service, message=message)
-            list_subject_and_from_email.append(subject_and_from_email)
+    service, messages = get_emails(creds, label)
+    for message in messages:
+        subject_and_from_email = get_subject_and_from_email(service=service, message=message)
+        list_subject_and_from_email.append(subject_and_from_email)
     return list_subject_and_from_email
 
 
@@ -100,11 +98,11 @@ def get_subject_and_from_email(service, message):
     return subject, from_email
 
 
-def get_list_subject_and_from_email_with_gmail_label(labels):
+def get_list_subject_and_from_email_with_gmail_label(label):
     """"""
     scopes = get_scopes()
     creds = get_credentials_cover(scopes)
-    list_subject_and_from_email = get_list_subject_and_from_email(creds=creds, labels=labels)
+    list_subject_and_from_email = get_list_subject_and_from_email(creds=creds, label=label)
     return list_subject_and_from_email
 
 

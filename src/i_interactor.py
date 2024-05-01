@@ -4,6 +4,12 @@ from typing import TypeVar, Generic
 T = TypeVar('T')
 
 
+class IWriteProductSummaryInteractor(ABC, Generic[T]):
+    @abstractmethod
+    def handle(self, input_data: T):
+        raise NotImplementedError()
+
+
 class IWriteMixtureWithAmountInteractor(ABC, Generic[T]):
     @abstractmethod
     def handle(self, input_data: T):
@@ -17,6 +23,10 @@ class ICalcAndWriteMixtureSimilarityInteractor(ABC, Generic[T]):
 
 
 class IRepository(ABC, Generic[T]):
+    @abstractmethod
+    def save_product_summary_direct_if_necessary(self, save_data: T):
+        raise NotImplementedError()
+
     @abstractmethod
     def save_mixture_and_amount_columns(self, save_data: T):
         raise NotImplementedError()

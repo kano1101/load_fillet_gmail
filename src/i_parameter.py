@@ -12,7 +12,7 @@ class IParameterController(ABC):
     def __init__(self):
         raise NotImplementedError()
 
-    def get_labels(self):
+    def get_label(self):
         pass
 
 
@@ -25,5 +25,8 @@ class IParameterRepository(ABC):
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
 
-    def get_output_worksheet(self):
+    def get_output_product_worksheet(self):
+        pass
+
+    def get_output_expand_worksheet(self):
         pass

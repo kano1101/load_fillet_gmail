@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 from i_parameter import IParameter, IParameterController, IParameterInteractor, IParameterRepository
 from parameter import Parameter, ParameterController, ParameterInteractor, ParameterRepository
 from controller import Controller
-from i_interactor import IRepository, IPresenter
+from i_interactor import IRepository, IPresenter, IWriteProductSummaryInteractor
 from i_interactor import IWriteMixtureWithAmountInteractor
 from i_interactor import ICalcAndWriteMixtureSimilarityInteractor
+from write_product_summary_interactor import WriteProductSummaryInteractor
 from write_mixture_with_amount_interactor import WriteMixtureWithAmountInteractor
 from calc_and_write_mixture_similarity_interactor import CalcAndWriteMixtureSimilarityInteractor
 from repository import Repository
@@ -28,6 +29,7 @@ class DependencyBuilder:
     @classmethod
     def configure(cls, binder: injector.Binder) -> None:
         binder.bind(Controller, to=Controller)
+        binder.bind(IWriteProductSummaryInteractor, to=WriteProductSummaryInteractor)
         binder.bind(IWriteMixtureWithAmountInteractor, to=WriteMixtureWithAmountInteractor)
         binder.bind(ICalcAndWriteMixtureSimilarityInteractor, to=CalcAndWriteMixtureSimilarityInteractor)
         binder.bind(IRepository, to=Repository)
@@ -51,5 +53,6 @@ if __name__ == '__main__':
     dependency = DependencyBuilder()
     controller = dependency.build()
 
+    controller.write_product_if_necessary()
     # controller.write_mixture_with_amount()
-    controller.calc_and_write_mixture_similarity()
+    # controller.calc_and_write_mixture_similarity()

@@ -1,6 +1,5 @@
 import re
 
-
 def col_name_to_index(col_name):
     """列名（'A'、'B'、...、'AA'、等）を0から始まるインデックスに変換する"""
     index = 0
@@ -25,3 +24,11 @@ def to_column_values(arr):
 
 def replace_whitespace(text):
     return re.sub(r'\s', ' ', text)
+
+
+def max_value_in_column(values, index) -> int:
+    max_val = values[0][index]  # 最大値を初期化（最初の行の指定列の値で初期化）
+    for row in values:
+        if row[index] > max_val:
+            max_val = row[index]  # より大きな値が見つかった場合、最大値を更新
+    return int(max_val)
