@@ -18,7 +18,7 @@ class Repository(IRepository[SaveMixtureWithAmountData]):
         self.update_mixture_and_amount_columns(save_data)
 
     def save_similarity_and_adapter_columns(self, save_data: SaveSimilarityData):
-        self.output_worksheet.batch_clear(["J2:K"])
+        self.output_worksheet.batch_clear(["K2:L"])
         self.update_similarity_and_adapter_columns(save_data)
 
     def update_mixture_and_amount_columns(self, save_data: SaveMixtureWithAmountData):
@@ -34,13 +34,13 @@ class Repository(IRepository[SaveMixtureWithAmountData]):
 
     def update_similarity_and_adapter_columns(self, save_data: SaveSimilarityData):
         similarities = save_data.get_similarities()
-        adapters = save_data.get_adapters()
+        adapters = save_data.get_similar_names()
 
         similarity_column_values = to_column_values(similarities)
         adapter_column_values = to_column_values(adapters)
 
-        self.update_column(similarity_column_values, 9)
-        self.update_column(adapter_column_values, 10)
+        self.update_column(similarity_column_values, 10)
+        self.update_column(adapter_column_values, 11)
 
     def update_column(self, values, index):
         for row_value in values:

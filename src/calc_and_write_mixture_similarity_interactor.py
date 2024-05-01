@@ -1,3 +1,4 @@
+from flexa import Flexa
 from difflib import SequenceMatcher
 from utils import replace_whitespace
 
@@ -7,14 +8,14 @@ from i_parameter import IParameterInteractor
 
 
 class SimilarityInputData:
-    def __init__(self, adapter_names, product_names, article_names, package_names) -> None:
-        self.adapter_names = adapter_names
+    def __init__(self, similar_names, product_names, article_names, package_names) -> None:
+        self.similar_names = similar_names
         self.product_names = product_names
         self.article_names = article_names
         self.package_names = package_names
 
-    def get_adapter_names(self):
-        return self.adapter_names
+    def get_similar_names(self):
+        return self.similar_names
 
     def get_product_names(self):
         return self.product_names
@@ -32,15 +33,15 @@ class SimilarityOutputData:
 
 
 class SaveSimilarityData:
-    def __init__(self, similarities, adapters) -> None:
+    def __init__(self, similarities, similar_names) -> None:
         self.similarities = similarities
-        self.adapters = adapters
+        self.similar_names = similar_names
 
     def get_similarities(self):
         return self.similarities
 
-    def get_adapters(self):
-        return self.adapters
+    def get_similar_names(self):
+        return self.similar_names
 
 
 class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInteractor[SimilarityInputData]):
@@ -49,9 +50,14 @@ class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInte
         self.parameter = parameter
         self.repository = repository
         self.presenter = presenter
+        self.flexa = Flexa()
+
+    def add_to_flexa(self, buttocks_names):
+        for buttocks_name in buttocks_names:
+            self.flexa.set(buttocks_name, buttocks_name)
 
     def handle(self, input_data: SimilarityInputData):
-        adapter_names = input_data.get_adapter_names()
+        similar_names = input_data.get_similar_names()
 
         product_names = input_data.get_product_names()
         article_names = input_data.get_article_names()
@@ -60,28 +66,30 @@ class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInte
         buttocks_names = product_names + article_names + package_names
 
         similarities = []
-        adapters = []
+        adapter_names = []
 
-        for adapter_name in adapter_names:
-            adapter_name_with_whitespace = replace_whitespace(adapter_name)
+        for similar_name in similar_names:
+            similar_name_with_whitespace = replace_whitespace(similar_name)
 
             highest_similarity = 0
-            most_similar_mixture = ""
+            most_similar_adapter_name = ""
 
             for buttocks_name in buttocks_names:
 
                 # ここにのちにアダプタ検索も追加
+
+
                 buttocks_with_whitespace = replace_whitespace(buttocks_name)
 
-                similarity = SequenceMatcher(None, adapter_name_with_whitespace, buttocks_with_whitespace).ratio()
+                similarity = SequenceMatcher(None, similar_name_with_whitespace, buttocks_with_whitespace).ratio()
                 if similarity > highest_similarity:
                     highest_similarity = similarity
-                    most_similar_mixture = buttocks_with_whitespace
+                    most_similar_adapter_name = buttocks_with_whitespace
 
             similarities.append(highest_similarity)
-            adapters.append(most_similar_mixture)
+            adapter_names.append(most_similar_adapter_name)
 
-        save_data = SaveSimilarityData(similarities, adapters)
+        save_data = SaveSimilarityData(similarities, adapter_names)
         self.repository.save_similarity_and_adapter_columns(save_data)
 
         # output_result = result

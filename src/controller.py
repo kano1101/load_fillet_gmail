@@ -41,16 +41,16 @@ class Controller:
         # 類似度を求める
         ss = get_recipe_support_spreadsheet()
 
-        adapter_worksheet = get_worksheet_in_recipe_support(ss, "領域展開")
+        similar_worksheet = get_worksheet_in_recipe_support(ss, "領域展開")
         product_worksheet = get_worksheet_in_recipe_support(ss, "製品")
         article_worksheet = get_worksheet_in_recipe_support(ss, "材料")
         package_worksheet = get_worksheet_in_recipe_support(ss, "包材")
 
-        adapter_names = adapter_worksheet.col_values(7)[1:]
+        similar_names = similar_worksheet.col_values(10)[1:]
         product_names = product_worksheet.col_values(2)[1:]
         article_names = article_worksheet.col_values(2)[1:]
         package_names = package_worksheet.col_values(2)[1:]
 
-        input_data = SimilarityInputData(adapter_names, product_names, article_names, package_names)
+        input_data = SimilarityInputData(similar_names, product_names, article_names, package_names)
 
         self.calc_and_write_mixture_similarity_interactor.handle(input_data)
