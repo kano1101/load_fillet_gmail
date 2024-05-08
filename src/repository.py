@@ -1,11 +1,11 @@
 import injector
 
 from i_interactor import IRepository
-from i_parameter import IParameterRepository
+from i_parameter import IRepositoryParameter
 from write_product_summary_interactor import SaveProductSummaryData
 from write_mixture_with_amount_interactor import SaveMixtureWithAmountData
 from calc_and_write_mixture_similarity_interactor import SaveSimilarityData
-from utils import index_to_col_name, to_column_values, max_value_in_column
+from utils import index_to_col_name, to_column_values, max_value_in_column, to_num
 
 
 def exists_product_and_label(added_product_summary_values, product_name, label):
@@ -19,7 +19,7 @@ def exists_product_and_label(added_product_summary_values, product_name, label):
 
 class Repository(IRepository[SaveMixtureWithAmountData]):
     @injector.inject
-    def __init__(self, parameter: IParameterRepository):
+    def __init__(self, parameter: IRepositoryParameter):
         self.parameter = parameter
         self.output_product_worksheet = self.parameter.get_output_product_worksheet()
         self.output_expand_worksheet = self.parameter.get_output_expand_worksheet()
@@ -44,19 +44,36 @@ class Repository(IRepository[SaveMixtureWithAmountData]):
 
         new_code = 1 + max_value_in_column(added_product_summary_values, product_code_column_index)
 
-        not_yet_added = []
+        not_yet_added_rows: list[[int, str, str, str, float, float | str]] = []
 
         for i, row_properties in enumerate(rows):
             product_name = row_properties[0]
             label = row_properties[1]
-            amount = row_properties[2]
+            amount = to_num(row_properties[2])
             unit = row_properties[3]
+
+            not_yet_added_row = []
+
             if exists_product_and_label(added_product_summary_values, product_name, label):
                 continue # 存在するのでスキップ
+
             # 存在しないので追加リストに保持
-            not_yet_added.append([new_code + i, product_name, label])
-        # 追加リストを登録
-        output_direct_worksheet.append_rows(not_yet_added)
+            not_yet_added_row.append(new_code + i)
+            not_yet_added_row.append(product_name)
+            not_yet_added_row.append(label)
+            not_yet_added_row.append(None)
+            if unit == "g":
+                not_yet_added_row.append(1)
+                not_yet_added_row.append(amount)
+            else:
+                not_yet_added_row.append(amount)
+                not_yet_added_row.append("")
+
+            # 追加リストを登録
+            print(f"Logging in Repository.add_product_summary_direct_if_necessary: {not_yet_added_row}")
+            not_yet_added_rows.append(not_yet_added_row)
+
+        output_direct_worksheet.append_rows(not_yet_added_rows)
 
     def update_mixture_and_amount_columns(self, save_data: SaveMixtureWithAmountData):
         column_numbers = [1, 2, 3, 4]  # 0を含める

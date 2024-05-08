@@ -1,8 +1,6 @@
-from typing import List, Tuple
-
 import injector
 from i_interactor import IWriteProductSummaryInteractor, IRepository, IPresenter
-from i_parameter import IParameterInteractor
+from i_parameter import IInteractorParameter
 
 
 class ProductSummaryInputData:
@@ -24,7 +22,7 @@ class ProductSummaryOutputData:
 
 class SaveProductSummaryData:
     def __init__(self, rows) -> None:
-        self.rows: List[Tuple[str, str, str]] = rows
+        self.rows: list[[str, str, str]] = rows
 
     def get_rows(self):
         return self.rows
@@ -32,7 +30,7 @@ class SaveProductSummaryData:
 
 class WriteProductSummaryInteractor(IWriteProductSummaryInteractor[ProductSummaryInputData]):
     @injector.inject
-    def __init__(self, parameter: IParameterInteractor, repository: IRepository, presenter: IPresenter) -> None:
+    def __init__(self, parameter: IInteractorParameter, repository: IRepository, presenter: IPresenter) -> None:
         self.parameter = parameter
         self.repository = repository
         self.presenter = presenter
@@ -42,7 +40,7 @@ class WriteProductSummaryInteractor(IWriteProductSummaryInteractor[ProductSummar
         soups = input_data.get_soups()
         label = input_data.get_label()
 
-        list_product_and_amount: List[Tuple[str, str, str, str]] = []
+        list_product_and_amount: list[[str, str, str, str]] = []
 
         for soup in soups:
             strong_tags = soup.find_all('strong')

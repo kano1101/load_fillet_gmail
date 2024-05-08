@@ -4,7 +4,7 @@ from utils import replace_whitespace
 
 import injector
 from i_interactor import ICalcAndWriteMixtureSimilarityInteractor, IRepository, IPresenter
-from i_parameter import IParameterInteractor
+from i_parameter import IInteractorParameter
 
 
 class SimilarityInputData:
@@ -46,7 +46,7 @@ class SaveSimilarityData:
 
 class CalcAndWriteMixtureSimilarityInteractor(ICalcAndWriteMixtureSimilarityInteractor[SimilarityInputData]):
     @injector.inject
-    def __init__(self, parameter: IParameterInteractor, repository: IRepository, presenter: IPresenter) -> None:
+    def __init__(self, parameter: IInteractorParameter, repository: IRepository, presenter: IPresenter) -> None:
         self.parameter = parameter
         self.repository = repository
         self.presenter = presenter

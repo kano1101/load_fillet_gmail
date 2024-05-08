@@ -26,6 +26,10 @@ def replace_whitespace(text):
     return re.sub(r'\s', ' ', text)
 
 
+def to_num(text):
+    return float(text.replace(',', ''))
+
+
 def max_value_in_column(values, index) -> int:
     max_val = values[0][index]  # 最大値を初期化（最初の行の指定列の値で初期化）
     for row in values:

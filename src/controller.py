@@ -5,7 +5,7 @@ from helper import get_soups_with_gmail_label, get_worksheet_in_recipe_support, 
 from write_product_summary_interactor import ProductSummaryInputData
 from write_mixture_with_amount_interactor import MixtureWithAmountInputData
 from calc_and_write_mixture_similarity_interactor import SimilarityInputData
-from i_parameter import IParameterController
+from i_parameter import IControllerParameter
 from i_interactor import IWriteProductSummaryInteractor
 from i_interactor import IWriteMixtureWithAmountInteractor
 from i_interactor import ICalcAndWriteMixtureSimilarityInteractor
@@ -15,7 +15,7 @@ class Controller:
     @injector.inject
     def __init__(
         self,
-        parameter: IParameterController,
+        parameter: IControllerParameter,
         write_product_summary_interactor: IWriteProductSummaryInteractor,
         write_mixture_with_amount_interactor: IWriteMixtureWithAmountInteractor,
         calc_and_write_mixture_similarity_interactor: ICalcAndWriteMixtureSimilarityInteractor,
@@ -27,7 +27,7 @@ class Controller:
         self.calc_and_write_mixture_similarity_interactor = calc_and_write_mixture_similarity_interactor
         print("Controller end")
 
-    def write_product_if_necessary(self):
+    def write_product_summary_if_necessary(self):
         print("Controller.write_product_if_necessary start")
         label = self.parameter.get_label()
 

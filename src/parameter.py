@@ -1,6 +1,6 @@
 import os
 
-from i_parameter import IParameter, IParameterController, IParameterRepository, IParameterInteractor
+from i_parameter import IParameter, IControllerParameter, IRepositoryParameter, IInteractorParameter
 import injector
 
 from helper import open_spreadsheet_on_default_account, get_credentials_cover, get_scopes
@@ -12,23 +12,24 @@ class Parameter(IParameter):
         pass
 
 
-class ParameterController(IParameterController):
+class ControllerParameter(IControllerParameter):
     @injector.inject
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
-        self.label = "2024焼菓子ギャラリー"
+        # self.label = "2024焼菓子ギャラリー"
+        self.label = os.environ.get('LABEL_NAME')
 
     def get_label(self):
         return self.label
 
 
-class ParameterInteractor(IParameterInteractor):
+class InteractorParameter(IInteractorParameter):
     @injector.inject
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
 
 
-class ParameterRepository(IParameterRepository):
+class RepositoryParameter(IRepositoryParameter):
     @injector.inject
     def __init__(self, parameter: IParameter):
         self.parameter = parameter

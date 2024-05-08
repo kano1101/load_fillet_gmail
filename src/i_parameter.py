@@ -7,7 +7,7 @@ class IParameter(ABC):
         raise NotImplementedError()
 
 
-class IParameterController(ABC):
+class IControllerParameter(ABC):
     @abstractmethod
     def __init__(self):
         raise NotImplementedError()
@@ -16,12 +16,12 @@ class IParameterController(ABC):
         pass
 
 
-class IParameterInteractor(ABC):
+class IInteractorParameter(ABC):
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
 
 
-class IParameterRepository(ABC):
+class IRepositoryParameter(ABC):
     def __init__(self, parameter: IParameter):
         self.parameter = parameter
 

@@ -1,10 +1,9 @@
 import injector
 from typing import Type, TypeVar
 from collections.abc import Callable
-from dotenv import load_dotenv
 
-from i_parameter import IParameter, IParameterController, IParameterInteractor, IParameterRepository
-from parameter import Parameter, ParameterController, ParameterInteractor, ParameterRepository
+from i_parameter import IParameter, IControllerParameter, IInteractorParameter, IRepositoryParameter
+from parameter import Parameter, ControllerParameter, InteractorParameter, RepositoryParameter
 from controller import Controller
 from i_interactor import IRepository, IPresenter, IWriteProductSummaryInteractor
 from i_interactor import IWriteMixtureWithAmountInteractor
@@ -36,9 +35,9 @@ class DependencyBuilder:
         binder.bind(IPresenter, to=Presenter)
         binder.bind(IViewer, to=ConsoleViewer)
         binder.bind(IParameter, to=Parameter)
-        binder.bind(IParameterController, to=ParameterController)
-        binder.bind(IParameterInteractor, to=ParameterInteractor)
-        binder.bind(IParameterRepository, to=ParameterRepository)
+        binder.bind(IControllerParameter, to=ControllerParameter)
+        binder.bind(IInteractorParameter, to=InteractorParameter)
+        binder.bind(IRepositoryParameter, to=RepositoryParameter)
 
     def __getitem__(self, klass: Type[T]) -> Callable:
         # 与えられたインタフェースに応じて実体クラスを返す
@@ -46,13 +45,3 @@ class DependencyBuilder:
 
     def build(self) -> Controller:
         return self[Controller]()
-
-
-if __name__ == '__main__':
-    load_dotenv()
-    dependency = DependencyBuilder()
-    controller = dependency.build()
-
-    controller.write_product_if_necessary()
-    # controller.write_mixture_with_amount()
-    # controller.calc_and_write_mixture_similarity()
