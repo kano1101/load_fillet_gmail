@@ -53,6 +53,7 @@ class WriteProductSummaryInteractor(IWriteProductSummaryInteractor[ProductSummar
                     list_product_and_amount.append([product_name] + [label] + amount_and_unit)
 
         save_result = list_product_and_amount
+        print(f"{len(list_product_and_amount)} products found")
 
         save_data = SaveProductSummaryData(save_result)
         self.repository.save_product_summary_direct_if_necessary(save_data)

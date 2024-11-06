@@ -20,18 +20,19 @@ class Controller:
         write_mixture_with_amount_interactor: IWriteMixtureWithAmountInteractor,
         calc_and_write_mixture_similarity_interactor: ICalcAndWriteMixtureSimilarityInteractor,
     ):
-        print("Controller start")
+        print("Controller constructor start")
         self.parameter = parameter
         self.write_product_summary_interactor = write_product_summary_interactor
         self.write_mixture_with_amount_interactor = write_mixture_with_amount_interactor
         self.calc_and_write_mixture_similarity_interactor = calc_and_write_mixture_similarity_interactor
-        print("Controller end")
+        print("Controller constructor end")
 
     def write_product_summary_if_necessary(self):
         print("Controller.write_product_if_necessary start")
         label = self.parameter.get_label()
 
         mails = get_soups_with_gmail_label(label)
+        print(f"該当メール件数{len(mails)}")
 
         input_data = ProductSummaryInputData(mails, label)
         self.write_product_summary_interactor.handle(input_data)
