@@ -73,13 +73,32 @@ def get_credentials(pickle_file, creds_file, scopes):
     return creds
 
 
+# def get_soup_from_message(service, message):
+#     msg_raw = service.users().messages().get(userId='me', id=message['id'], format='raw').execute()
+#     msg_body = base64.urlsafe_b64decode(msg_raw['raw'].encode('ASCII'))
+#     decoded_table = quopri.decodestring(msg_body).decode("utf-8", errors='ignore')
+#     soup = BeautifulSoup(decoded_table, 'html.parser')
+#     return soup
 def get_soup_from_message(service, message):
-    msg_raw = service.users().messages().get(userId='me', id=message['id'], format='raw').execute()
-    msg_body = base64.urlsafe_b64decode(msg_raw['raw'].encode('ASCII'))
-    decoded_table = quopri.decodestring(msg_body).decode("utf-8", errors='ignore')
-    soup = BeautifulSoup(decoded_table, 'html.parser')
-    return soup
+    msg_data = service.users().messages().get(userId='me', id=message['id'], format='full').execute()
+    payload = msg_data['payload']
 
+    # マルチパートであれば、HTML部分を抽出
+    parts = payload.get('parts', [])
+    for part in parts:
+        if part['mimeType'] == 'text/html':
+            data = part['body'].get('data')
+            if data:
+                msg_body = base64.urlsafe_b64decode(data.encode('ASCII')).decode('utf-8')
+                soup = BeautifulSoup(msg_body, 'html.parser')
+                return soup
+    # 単一パートの場合
+    body_data = payload['body'].get('data')
+    if body_data:
+        msg_body = base64.urlsafe_b64decode(body_data.encode('ASCII')).decode('utf-8')
+        soup = BeautifulSoup(msg_body, 'html.parser')
+        return soup
+    return None
 
 def get_list_subject_and_from_email(creds, label):
     list_subject_and_from_email = []
